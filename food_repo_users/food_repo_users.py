@@ -10,6 +10,26 @@ def error_message(message='Incorrect parameters'):
 def get_expiry_time():
     return (datetime.now(timezone.utc) + timedelta(hours=24)).strftime('%Y%m%d%H%M')
 
+# Returns an empty string if the token it receives as a parameter is active,
+# an error message otherwise
+def authenticate(token):
+    if not token:
+        return 'Missing session token'
+
+    db = get_db()
+    sql = '''
+        SELECT COUNT(*)
+        FROM user
+        WHERE cToken = ?
+        AND dTokenExpiration >= ?
+    '''
+    current_time = datetime.now(timezone.utc).strftime('%Y%m%d%H%M')
+    user_count = db.execute(sql, (token, current_time)).fetchone()
+    if user_count[0] == 0:
+        return 'Invalid or expired token'
+
+    return ''
+
 bp = Blueprint('food_repo_users', __name__)
 
 # User creation
@@ -105,22 +125,11 @@ def validate_login():
 @bp.route('/auth/logout', methods=['DELETE'])
 def logout():
     token = request.headers.get('X-Session-Token')
-
-    if not token:
-        return error_message('Missing session token'), 401        
+    message = authenticate(token)
+    if not message == '':
+        return error_message(message), 401
 
     db = get_db()
-    sql = '''
-        SELECT COUNT(*)
-        FROM user
-        WHERE cToken = ?
-        AND dTokenExpiration >= ?
-    '''
-    current_time = datetime.now(timezone.utc).strftime('%Y%m%d%H%M')
-    user_count = db.execute(sql, (token, current_time)).fetchone()
-    if user_count[0] == 0:
-        return error_message('Invalid or expired token'), 401
-
     cursor = db.cursor()
     cursor.execute(
         '''
@@ -142,6 +151,12 @@ def logout():
 # Management of user favourites
 @bp.route('/users/<int:user_id>/favourites', methods=('GET', 'POST', 'DELETE'))
 def manage_user_favourites(user_id):
+    
+    # User authentication
+    message = authenticate(request.headers.get('X-Session-Token'))
+    if not message == '':
+        return error_message(message), 401
+
     # Get the list of favourite recipes
     if request.method == 'GET':
         db = get_db()
