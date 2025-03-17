@@ -97,7 +97,7 @@ pip install -r requirements.txt
 python -m flask --app food_repo_users init-db
 ```
 
-## Running the API
+5. Running the API
 Within (venv), run:
 ```
 python -m flask --app food_repo_users run --port 5510 --debug
