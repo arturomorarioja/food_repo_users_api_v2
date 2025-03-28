@@ -1,0 +1,487 @@
+{
+	"info": {
+		"_postman_id": "db35d433-7847-4e07-a37e-b8a26e77243f",
+		"name": "Food Repo Users v2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11087769"
+	},
+	"item": [
+		{
+			"name": "users missing data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "first_name",
+							"value": "Lars M.",
+							"type": "text"
+						},
+						{
+							"key": "last_name",
+							"value": "Madsen",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "{{EMAIL}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{PASSWORD}}",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/users",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.environment.set('USER_ID', jsonData['user_id'])"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "first_name",
+							"value": "Lars M.",
+							"type": "text"
+						},
+						{
+							"key": "last_name",
+							"value": "Madsen",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "{{EMAIL}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{PASSWORD}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/users",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/login wrong password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "{{EMAIL}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "wrong_password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/auth/login",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/login nonexistent user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "wrong@mail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{PASSWORD}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/auth/login",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Save token and ID\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.environment.set(\"TOKEN\", jsonData['token']);\r",
+							"    pm.environment.set(\"USER_ID\", jsonData['user_id']);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "{{EMAIL}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{PASSWORD}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/auth/login",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "### /auth/login\n\nThis endpoint is used to authenticate and login a user.\n\n#### Request\n\n- Method: POST\n    \n- Base URL: {{BASE_URL}}\n    \n- Body (form-data):\n    \n    - email (text, required): The email of the user.\n        \n    - password (text, required): The password of the user.\n        \n\n#### Response\n\nThe response of this request is a JSON object with the following schema:\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    // Add properties based on the actual response\n  }\n}\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "favourite",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Session-Token",
+						"value": "{{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "recipe_id",
+							"value": "{{RECIPE_ID}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/users/{{USER_ID}}/favourites",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"users",
+						"{{USER_ID}}",
+						"favourites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "favourites",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Session-Token",
+						"value": "{{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/users/{{USER_ID}}/favourites",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"users",
+						"{{USER_ID}}",
+						"favourites"
+					]
+				},
+				"description": "This endpoint retrieves the list of favorites for a specific user. The response of this request can be documented as a JSON schema."
+			},
+			"response": []
+		},
+		{
+			"name": "favourites",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Session-Token",
+						"value": "{{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "recipe_id",
+							"value": "{{RECIPE_ID}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/users/{{USER_ID}}/favourites",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"users",
+						"{{USER_ID}}",
+						"favourites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/logout no token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Session-Token",
+						"value": "invalid_token",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/auth/logout",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/logout false token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Session-Token",
+						"value": "invalid_token",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/auth/logout",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Session-Token",
+						"value": "{{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URL}}/auth/logout",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"Response time is less than 200ms\", function () {\r",
+					"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+					"});"
+				]
+			}
+		}
+	]
+}

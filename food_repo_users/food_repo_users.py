@@ -198,7 +198,7 @@ def manage_user_favourites(user_id):
                 cursor.close()
                 db.commit()
                 if affected_rows > 0:
-                    return jsonify({'status': 'ok'})
+                    return jsonify({'status': 'ok'}), 201
                 else:
                     return error_message('The recipe could not be added as favourite'), 500
             else:
