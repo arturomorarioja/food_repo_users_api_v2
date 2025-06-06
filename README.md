@@ -73,7 +73,7 @@ Return values:
 
 #### Option 1. Docker
 1. Start Docker Desktop
-2. In the command line, run `docker-compose up -d`. The API will be available at `http://localhost:5510`.
+2. In the command line, run `docker-compose up -d`. The API will be available at `http://localhost:8844`.
 3. Stop the Docker container by running `docker-compose down`.
 
 #### Option 2. Manual
@@ -102,9 +102,9 @@ python -m flask --app food_repo_users init-db
 5. Running the API
 Within (venv), run:
 ```
-python -m flask --app food_repo_users run --port 5510 --debug
+python -m flask --app food_repo_users run --port 8844 --debug
 ```
-The endpoints will be available at `http://localhost:5510`.
+The endpoints will be available at `http://localhost:8844`.
 
 ## Tools
 SQLite / Flask / Python
